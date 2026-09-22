@@ -1,10 +1,10 @@
 const KEY="loopify_content_calendar_v1";
-const clientsDefault=["Aqua Care RO System","KPR IAS Academy","E2FIT","Loopify"];
+const clientsDefault=["Aqua Care RO System","E2FIT"];
 let data=JSON.parse(localStorage.getItem(KEY)||"null")||[
  {id:1,client:"Aqua Care RO System",date:"2026-09-24",time:"18:00",platform:"Instagram",type:"Static Post",title:"The Water Looks Clean. But What's Inside It?",status:"Approved",caption:"Clear water doesn't automatically tell you everything about its quality.",cta:"DM us to know your water quality.",creative:"",postUrl:""},
- {id:2,client:"KPR IAS Academy",date:"2026-09-26",time:"19:00",platform:"Instagram",type:"Carousel",title:"TNPSC Group 2/2A: 5 Topics You Must Revise",status:"Approval",caption:"Save this revision checklist for your preparation.",cta:"Comment REVISION",creative:"",postUrl:""},
  {id:3,client:"E2FIT",date:"2026-09-28",time:"08:00",platform:"Facebook",type:"Static Post",title:"Healthy Breakfast Subscription",status:"Design",caption:"A fresh start to your morning.",cta:"DM for subscription details.",creative:"",postUrl:""}
 ];
+data=data.filter(x=>clientsDefault.includes(x.client));
 let view="dashboard", current=new Date(2026,8,22);
 const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s);
 function save(){localStorage.setItem(KEY,JSON.stringify(data))}
