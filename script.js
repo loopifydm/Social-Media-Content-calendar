@@ -1,4 +1,4 @@
-const KEY="loopify_content_calendar_v2";
+const KEY="loopify_content_calendar_v3";
 const clientsDefault=["Aqua Care RO System","E2FIT"];
 let data=JSON.parse(localStorage.getItem(KEY)||"null")||[
 {id:1,client:"Aqua Care RO System",date:"2026-09-28",time:"19:30",platform:"Instagram",type:"Static Post",title:"Is Your Drinking Water Really Safe?",status:"Idea",caption:"The water looks clean. But can you actually see what's inside it?",cta:"DM WATER",creative:"",postUrl:""},
@@ -33,6 +33,46 @@ let data=JSON.parse(localStorage.getItem(KEY)||"null")||[
 {id:30,client:"Aqua Care RO System",date:"2026-12-04",time:"19:30",platform:"Instagram",type:"Static Post",title:"30 Days of Water Tips. Now Let's Check Your Water.",status:"Idea",caption:"RO service, maintenance, new installation, replacement/upgrade or product guidance.",cta:"DM WATER",creative:"",postUrl:""}
 ];
 data=data.filter(x=>clientsDefault.includes(x.client));
+
+const dailyStories=[
+["2026-09-28","When did you last service your RO?","Technician / RO installation / service work","Need RO Service? 🔧 Need a New RO? 💧 DM SERVICE / BUY"],
+["2026-09-29","Do you check your RO water regularly?","Filter / product / customer visit","Need RO Service? 🔧 Need a New RO? 💧 DM SERVICE / BUY"],
+["2026-09-30","What is your RO's biggest problem right now?","Before/after service work","Need RO Service? 🔧 Need a New RO? 💧 DM SERVICE / BUY"],
+["2026-10-01","How often do you think an RO needs service?","Technician checking an RO","Need RO Service? 🔧 Need a New RO? 💧 DM SERVICE / BUY"],
+["2026-10-02","Would you know if your RO filter needs replacement?","RO filter close-up","Need RO Service? 🔧 Need a New RO? 💧 DM SERVICE / BUY"],
+["2026-10-03","Do you know what is inside your RO?","RO internal components","Need RO Service? 🔧 Need a New RO? 💧 DM SERVICE / BUY"],
+["2026-10-04","When was your last RO maintenance?","Customer visit / service work","Need RO Service? 🔧 Need a New RO? 💧 DM SERVICE / BUY"],
+["2026-10-05","RO, UV or UF — which one do you use?","Technician explaining water treatment","Need RO Service? 🔧 Need a New RO? 💧 DM SERVICE / BUY"],
+["2026-10-06","Is your RO taking longer to fill?","Before/after water-flow service","Need RO Service? 🔧 Need a New RO? 💧 DM SERVICE / BUY"],
+["2026-10-07","Have you noticed a change in water taste?","Filter inspection / service work","Need RO Service? 🔧 Need a New RO? 💧 DM SERVICE / BUY"],
+["2026-10-08","Do you wait until the RO stops before servicing it?","Technician performing preventive check","Need RO Service? 🔧 Need a New RO? 💧 DM SERVICE / BUY"],
+["2026-10-09","How old is your current RO?","RO installation / product","Need RO Service? 🔧 Need a New RO? 💧 DM SERVICE / BUY"],
+["2026-10-10","Would you choose price or service support first?","Technician / customer visit","Need RO Service? 🔧 Need a New RO? 💧 DM SERVICE / BUY"],
+["2026-10-11","Have you ever had an RO leakage problem?","Leakage check / service work","Need RO Service? 🔧 Need a New RO? 💧 DM SERVICE / BUY"],
+["2026-10-12","Can you name one RO component?","RO components / filter","Need RO Service? 🔧 Need a New RO? 💧 DM SERVICE / BUY"],
+["2026-10-13","Do you know when your RO membrane needs attention?","RO membrane / technician","Need RO Service? 🔧 Need a New RO? 💧 DM SERVICE / BUY"],
+["2026-10-14","How often do you clean/check your RO?","Technician service work","Need RO Service? 🔧 Need a New RO? 💧 DM SERVICE / BUY"],
+["2026-10-15","Would you buy an RO without checking your water source?","Technician assessing water / product","Need RO Service? 🔧 Need a New RO? 💧 DM SERVICE / BUY"],
+["2026-10-16","What matters more: RO price or after-sales service?","Customer visit / service work","Need RO Service? 🔧 Need a New RO? 💧 DM SERVICE / BUY"],
+["2026-10-17","Have you compared your RO service options?","Technician / installation","Need RO Service? 🔧 Need a New RO? 💧 DM SERVICE / BUY"],
+["2026-10-18","Would you like an RO buying checklist?","Product / installation / technician","Need RO Service? 🔧 Need a New RO? 💧 DM SERVICE / BUY"],
+["2026-10-19","Is your RO due for a service check?","Service inspection / filter","Need RO Service? 🔧 Need a New RO? 💧 DM SERVICE / BUY"],
+["2026-10-20","Do you know what your technician checks during service?","Technician performing service","Need RO Service? 🔧 Need a New RO? 💧 DM SERVICE / BUY"],
+["2026-10-21","Have you checked your RO for leakage recently?","Leakage check / before-after","Need RO Service? 🔧 Need a New RO? 💧 DM SERVICE / BUY"],
+["2026-10-22","Would you like to see a real RO installation?","RO installation / technician","Need RO Service? 🔧 Need a New RO? 💧 DM SERVICE / BUY"],
+["2026-10-23","Are you happy with your current RO?","Customer visit / testimonial","Need RO Service? 🔧 Need a New RO? 💧 DM SERVICE / BUY"],
+["2026-10-24","Are you planning to buy a new RO?","Product showcase","Need RO Service? 🔧 Need a New RO? 💧 DM SERVICE / BUY"],
+["2026-10-25","Do you know when to replace an old RO?","Old vs replacement / installation","Need RO Service? 🔧 Need a New RO? 💧 DM SERVICE / BUY"],
+["2026-10-26","What would you ask before buying an RO?","Technician explaining product","Need RO Service? 🔧 Need a New RO? 💧 DM SERVICE / BUY"],
+["2026-10-27","SERVICE or BUY — what do you need?","Customer visit / completed service","Need RO Service? 🔧 Need a New RO? 💧 DM SERVICE / BUY"]
+];
+let storyId=1001;
+dailyStories.forEach(([date,engagement,authority,conversion])=>{
+ data.push({id:storyId++,client:"Aqua Care RO System",date,time:"09:00",platform:"Instagram",type:"Story",title:"Story 1 — Engagement",status:"Idea",caption:engagement,cta:"Vote / Answer / Reply",creative:"",postUrl:""});
+ data.push({id:storyId++,client:"Aqua Care RO System",date,time:"13:00",platform:"Instagram",type:"Story",title:"Story 2 — Authority",status:"Idea",caption:authority,cta:"Show real work / real proof",creative:"",postUrl:""});
+ data.push({id:storyId++,client:"Aqua Care RO System",date,time:"20:30",platform:"Instagram",type:"Story",title:"Story 3 — Conversion",status:"Idea",caption:conversion,cta:"DM SERVICE / BUY",creative:"",postUrl:""});
+});
+
 let view="dashboard", current=new Date(2026,8,22);
 const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s);
 function localISO(d){return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
