@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Loopify Content Calendar</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app">
+<aside class="sidebar">
+  <div class="brand"><div class="brand-mark">L</div><div><strong>Loopify</strong><span>Content Studio</span></div></div>
+  <nav>
+    <button class="nav active" data-view="dashboard">⌂ <span>Dashboard</span></button>
+    <button class="nav" data-view="calendar">▦ <span>Content Calendar</span></button>
+    <button class="nav" data-view="content">✦ <span>All Content</span></button>
+    <button class="nav" data-view="clients">♙ <span>Clients</span></button>
+  </nav>
+  <div class="sidebar-bottom"><div class="mini-card"><b>Content workflow</b><span>Plan → Create → Approve → Publish</span></div></div>
+</aside>
+<main>
+<header class="topbar">
+ <div><h1 id="pageTitle">Dashboard</h1><p id="pageSub">Your social media content at a glance.</p></div>
+ <button class="primary" id="addBtn">＋ Add Content</button>
+</header>
+<section id="dashboardView" class="view">
+ <div class="stats">
+  <div class="stat"><span>Total Content</span><b id="statTotal">0</b><small>All planned posts</small></div>
+  <div class="stat"><span>Pending Approval</span><b id="statApproval">0</b><small>Needs client review</small></div>
+  <div class="stat"><span>Approved</span><b id="statApproved">0</b><small>Ready to publish</small></div>
+  <div class="stat"><span>Published</span><b id="statPublished">0</b><small>Completed content</small></div>
+ </div>
+ <div class="panel">
+  <div class="panel-head"><div><h2>Upcoming Content</h2><p>Next scheduled posts</p></div><button class="ghost" data-view="calendar">View calendar →</button></div>
+  <div id="upcoming" class="content-list"></div>
+ </div>
+</section>
+<section id="calendarView" class="view hidden">
+ <div class="toolbar">
+  <div class="month-nav"><button class="icon" id="prevMonth">‹</button><h2 id="monthLabel"></h2><button class="icon" id="nextMonth">›</button><button class="ghost" id="todayBtn">Today</button></div>
+  <div class="filters"><select id="filterClient"><option value="">All Clients</option></select><select id="filterPlatform"><option value="">All Platforms</option><option>Instagram</option><option>Facebook</option><option>LinkedIn</option></select><select id="filterStatus"><option value="">All Status</option><option>Idea</option><option>Draft</option><option>Design</option><option>Approval</option><option>Approved</option><option>Published</option></select></div>
+ </div>
+ <div class="calendar" id="calendar"></div>
+</section>
+<section id="contentView" class="view hidden">
+ <div class="toolbar"><div class="filters"><input id="search" placeholder="Search content..."><select id="listStatus"><option value="">All Status</option><option>Idea</option><option>Draft</option><option>Design</option><option>Approval</option><option>Approved</option><option>Published</option></select></div></div>
+ <div class="panel"><div id="allContent" class="table-wrap"></div></div>
+</section>
+<section id="clientsView" class="view hidden">
+ <div class="stats" id="clientCards"></div>
+</section>
+</main>
+</div>
+
+<div class="modal hidden" id="modal">
+ <div class="modal-card">
+  <div class="modal-head"><div><h2 id="modalTitle">Add Content</h2><p>Plan and manage a social media post.</p></div><button class="close" id="closeModal">×</button></div>
+  <form id="contentForm">
+   <input type="hidden" id="editId">
+   <div class="form-grid">
+    <label>Client<select id="client" required></select></label>
+    <label>Publish Date<input type="date" id="date" required></label>
+    <label>Platform<select id="platform"><option>Instagram</option><option>Facebook</option><option>LinkedIn</option></select></label>
+    <label>Content Type<select id="type"><option>Static Post</option><option>Carousel</option><option>Reel</option><option>Story</option><option>Video</option></select></label>
+    <label class="full">Topic / Title<input id="title" placeholder="e.g. 5 mistakes businesses make on Instagram" required></label>
+    <label>Status<select id="status"><option>Idea</option><option>Draft</option><option>Design</option><option>Approval</option><option>Approved</option><option>Published</option></select></label>
+    <label>Publish Time<input type="time" id="time" value="18:00"></label>
+    <label class="full">Caption<textarea id="caption" rows="4" placeholder="Write the caption..."></textarea></label>
+    <label class="full">CTA<input id="cta" placeholder="e.g. DM us to get started"></label>
+    <label class="full">Creative URL<input id="creative" type="url" placeholder="https://..."></label>
+    <label class="full">Post URL<input id="postUrl" type="url" placeholder="Published post link"></label>
+   </div>
+   <div class="form-actions"><button type="button" class="ghost" id="cancelBtn">Cancel</button><button class="primary" type="submit">Save Content</button></div>
+  </form>
+ </div>
+</div>
+<script src="script.js"></script>
+</body></html>
