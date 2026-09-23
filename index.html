@@ -42,8 +42,8 @@
  <div class="calendar" id="calendar"></div>
 </section>
 <section id="contentView" class="view hidden">
- <div class="toolbar"><div class="filters"><input id="search" placeholder="Search content..."><select id="listFormat"><option value="">All Content</option><option value="Post">Post</option><option value="Story">Story</option></select><select id="listStatus"><option value="">All Status</option><option>Idea</option><option>Draft</option><option>Design</option><option>Approval</option><option>Approved</option><option>Published</option></select></div></div>
- <div class="panel"><div id="allContent" class="table-wrap"></div></div>
+ <div class="toolbar"><div class="filters"><input id="search" placeholder="Search content..."><select id="listStatus"><option value="">All Status</option><option>Idea</option><option>Draft</option><option>Design</option><option>Approval</option><option>Approved</option><option>Published</option></select></div></div>
+ <div class="panel"><div class="export-actions"><button class="ghost" id="downloadAllCsvBtn">⬇ Download CSV</button><button class="ghost" id="downloadAllPdfBtn">⬇ Download PDF</button></div><div id="allContent" class="table-wrap"></div></div>
 </section>
 <section id="clientsView" class="view hidden">
  <div class="stats" id="clientCards"></div>
@@ -77,5 +77,5 @@
   </form>
  </div>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.4/dist/jspdf.plugin.autotable.min.js"></script><script src="script.js?v=10"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.4/dist/jspdf.plugin.autotable.min.js"></script><script src="script.js?v=11"></script>
 </body></html>
