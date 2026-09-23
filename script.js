@@ -90,6 +90,28 @@ function downloadMonth(){
  const monthName=current.toLocaleDateString("en-IN",{month:"long",year:"numeric"}).replace(/\\s+/g,"-");
  a.href=url;a.download="Loopify-Content-Calendar-"+monthName+".csv";document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
 }
+function downloadMonthPDF(){
+ const y=current.getFullYear(),m=current.getMonth();
+ const monthItems=data.filter(x=>{const d=new Date(x.date+"T00:00:00");return d.getFullYear()===y&&d.getMonth()===m}).sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time));
+ if(!window.jspdf || !window.jspdf.jsPDF){ alert("PDF library is still loading. Please try again."); return; }
+ const {jsPDF}=window.jspdf;
+ const doc=new jsPDF({orientation:"landscape",unit:"mm",format:"a4"});
+ const monthName=current.toLocaleDateString("en-IN",{month:"long",year:"numeric"});
+ doc.setFontSize(18); doc.text("Loopify Content Calendar",12,14);
+ doc.setFontSize(11); doc.text(monthName,12,21);
+ const body=monthItems.map(x=>[x.date,x.time||"",x.client||"",x.platform||"",x.type||"",x.pillar||"",x.title||"",x.status||"",x.posterContent||"",x.script||"",x.caption||"",x.hashtags||"",x.cta||""]);
+ doc.autoTable({
+   startY:26,
+   head:[["Date","Time","Client","Platform","Format","Pillar","Topic / Title","Status","Poster Content","Script","Caption","Hashtags","CTA"]],
+   body:body,
+   theme:"grid",
+   styles:{fontSize:5.5,cellPadding:1.2,overflow:"linebreak",valign:"top"},
+   headStyles:{fontSize:5.5},
+   margin:{left:7,right:7,top:26,bottom:8}
+ });
+ doc.save("Loopify-Content-Calendar-"+monthName.replace(/\s+/g,"-")+".pdf");
+}
+$("#downloadMonthPdfBtn").onclick=downloadMonthPDF;
 $("#downloadMonthCsvBtn").onclick=downloadMonth;
 
 ["filterClient","filterPlatform","filterStatus"].forEach(id=>$("#"+id).addEventListener("change",renderCalendar));["search","listStatus"].forEach(id=>$("#"+id).addEventListener("input",renderContent));
