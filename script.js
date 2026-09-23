@@ -95,23 +95,68 @@ function downloadMonth(){
 }
 function downloadMonthPDF(){
  const y=current.getFullYear(),m=current.getMonth();
- const monthItems=data.filter(x=>{const d=new Date(x.date+"T00:00:00");return d.getFullYear()===y&&d.getMonth()===m}).sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time));
- if(!window.jspdf || !window.jspdf.jsPDF){ alert("PDF library is still loading. Please try again."); return; }
+ const monthItems=data.filter(x=>{const d=new Date(x.date+"T00:00:00");return d.getFullYear()===y&&d.getMonth()===m})
+   .sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time));
+ if(!window.jspdf || !window.jspdf.jsPDF || !window.jspdf.jsPDF.API || !window.jspdf.jsPDF.API.autoTable){
+   alert("PDF library is still loading. Please try again.");
+   return;
+ }
  const {jsPDF}=window.jspdf;
  const doc=new jsPDF({orientation:"landscape",unit:"mm",format:"a4"});
  const monthName=current.toLocaleDateString("en-IN",{month:"long",year:"numeric"});
- doc.setFontSize(18); doc.text("Loopify Content Calendar",12,14);
- doc.setFontSize(11); doc.text(monthName,12,21);
- const body=monthItems.map(x=>[x.date,x.time||"",x.client||"",x.platform||"",x.type||"",x.pillar||"",x.title||"",x.status||"",x.posterContent||"",x.script||"",x.caption||"",x.hashtags||"",x.cta||""]);
- doc.autoTable({
-   startY:26,
-   head:[["Date","Time","Client","Platform","Format","Pillar","Topic / Title","Status","Poster Content","Script","Caption","Hashtags","CTA"]],
-   body:body,
-   theme:"grid",
-   styles:{fontSize:5.5,cellPadding:1.2,overflow:"linebreak",valign:"top"},
-   headStyles:{fontSize:5.5},
-   margin:{left:7,right:7,top:26,bottom:8}
+ const W=doc.internal.pageSize.getWidth();
+ const H=doc.internal.pageSize.getHeight();
+
+ function addHeader(){
+   doc.setFont("helvetica","bold"); doc.setFontSize(18);
+   doc.text("Loopify Content Calendar",12,14);
+   doc.setFont("helvetica","normal"); doc.setFontSize(10);
+   doc.text(monthName+"  •  Monthly Content Export",12,21);
+   doc.setFontSize(7); doc.text("Generated from Loopify Content Studio",W-12,14,{align:"right"});
+ }
+ addHeader();
+
+ let yPos=27;
+ monthItems.forEach((x,index)=>{
+   const values=[
+     ["Date",fmtDate(x.date)+"  "+(x.time||"")],
+     ["Client",x.client||""],
+     ["Platform / Format",(x.platform||"")+"  •  "+(x.type||"")],
+     ["Content Pillar",x.pillar||""],
+     ["Topic / Title",x.title||""],
+     ["Poster Content",x.posterContent||""],
+     ["Script",x.script||""],
+     ["Caption",x.caption||""],
+     ["Hashtags",x.hashtags||""],
+     ["CTA",x.cta||""]
+   ];
+   const rows=values.map(v=>[v[0],v[1]]);
+   const estimated=18+Math.min(58, rows.reduce((n,r)=>n+Math.max(1,Math.ceil(String(r[1]).length/105))*3.2,0));
+   if(yPos+estimated>H-12){
+     doc.addPage(); addHeader(); yPos=27;
+   }
+   doc.autoTable({
+     startY:yPos,
+     head:[[("CONTENT "+String(index+1).padStart(2,"0")),x.title||""]],
+     body:rows,
+     theme:"grid",
+     margin:{left:12,right:12},
+     styles:{font:"helvetica",fontSize:7,cellPadding:2.2,overflow:"linebreak",valign:"top",lineColor:[210,214,220],lineWidth:0.2},
+     headStyles:{fontSize:8,fontStyle:"bold",cellPadding:2.5},
+     columnStyles:{0:{cellWidth:32,fontStyle:"bold"},1:{cellWidth:W-56}},
+     alternateRowStyles:{fillColor:[248,249,251]},
+     pageBreak:"avoid"
+   });
+   yPos=doc.lastAutoTable.finalY+5;
  });
+ if(!monthItems.length){
+   doc.setFontSize(11); doc.text("No content scheduled for this month.",12,32);
+ }
+ const pages=doc.getNumberOfPages();
+ for(let p=1;p<=pages;p++){
+   doc.setPage(p); doc.setFontSize(7); doc.setFont("helvetica","normal");
+   doc.text("Page "+p+" of "+pages,W-12,H-6,{align:"right"});
+ }
  doc.save("Loopify-Content-Calendar-"+monthName.replace(/\s+/g,"-")+".pdf");
 }
 $("#downloadMonthPdfBtn").onclick=downloadMonthPDF;
