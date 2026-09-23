@@ -124,6 +124,61 @@ function downloadMonthPDF(){
 $("#downloadMonthPdfBtn").onclick=downloadMonthPDF;
 $("#downloadMonthCsvBtn").onclick=downloadMonth;
 
+function allContentItems(){
+ return [...data].sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time));
+}
+function downloadAllCSV(){
+ const items=allContentItems();
+ const headers=["Date","Time","Client","Platform","Format","Content Pillar","Topic / Title","Status","Poster Content","Script","Caption","Hashtags","CTA","Creative URL","Post URL"];
+ const rows=[headers,...items.map(x=>[x.date,x.time||"",x.client||"",x.platform||"",x.type||"",x.pillar||"",x.title||"",x.status||"",x.posterContent||"",x.script||"",x.caption||"",x.hashtags||"",x.cta||"",x.creative||"",x.postUrl||""])];
+ const csv="\ufeff"+rows.map(r=>r.map(csvCell).join(",")).join("\r\n");
+ const url=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8;"}));
+ const a=document.createElement("a"); a.href=url; a.download="Loopify-All-Content.csv"; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+}
+function downloadAllPDF(){
+ const items=allContentItems();
+ if(!window.jspdf || !window.jspdf.jsPDF || !window.jspdf.jsPDF.API || !window.jspdf.jsPDF.API.autoTable){alert("PDF library is still loading. Please try again.");return;}
+ const {jsPDF}=window.jspdf, doc=new jsPDF({orientation:"landscape",unit:"mm",format:"a4"});
+ const W=doc.internal.pageSize.getWidth(),H=doc.internal.pageSize.getHeight();
+ function header(){
+   doc.setFont("helvetica","bold");doc.setFontSize(18);doc.text("Loopify Content Calendar",12,14);
+   doc.setFont("helvetica","normal");doc.setFontSize(10);doc.text("All Content Export",12,21);
+   doc.setFontSize(7);doc.text("Generated from Loopify Content Studio",W-12,14,{align:"right"});
+ }
+ header(); let y=27;
+ items.forEach((x,i)=>{
+   const rows=[
+    ["Date",fmtDate(x.date)+"  "+(x.time||"")],
+    ["Client",x.client||""],
+    ["Platform / Format",(x.platform||"")+"  •  "+(x.type||"")],
+    ["Content Pillar",x.pillar||""],
+    ["Topic / Title",x.title||""],
+    ["Status",x.status||""],
+    ["Poster Content",x.posterContent||""],
+    ["Script",x.script||""],
+    ["Caption",x.caption||""],
+    ["Hashtags",x.hashtags||""],
+    ["CTA",x.cta||""]
+   ];
+   const estimated=20+Math.min(62,rows.reduce((n,r)=>n+Math.max(1,Math.ceil(String(r[1]).length/105))*3.2,0));
+   if(y+estimated>H-12){doc.addPage();header();y=27;}
+   doc.autoTable({
+    startY:y,head:[[("CONTENT "+String(i+1).padStart(2,"0")),x.title||""]],body:rows,theme:"grid",
+    margin:{left:12,right:12},
+    styles:{font:"helvetica",fontSize:7,cellPadding:2.2,overflow:"linebreak",valign:"top",lineColor:[210,214,220],lineWidth:0.2},
+    headStyles:{fontSize:8,fontStyle:"bold",cellPadding:2.5},
+    columnStyles:{0:{cellWidth:32,fontStyle:"bold"},1:{cellWidth:W-56}},
+    alternateRowStyles:{fillColor:[248,249,251]},pageBreak:"avoid"
+   });
+   y=doc.lastAutoTable.finalY+5;
+ });
+ if(!items.length){doc.setFontSize(11);doc.text("No content available.",12,32);}
+ const pages=doc.getNumberOfPages();for(let p=1;p<=pages;p++){doc.setPage(p);doc.setFontSize(7);doc.text("Page "+p+" of "+pages,W-12,H-6,{align:"right"});}
+ doc.save("Loopify-All-Content.pdf");
+}
+$("#downloadAllCsvBtn").onclick=downloadAllCSV;
+$("#downloadAllPdfBtn").onclick=downloadAllPDF;
+
 ["filterClient","filterPlatform","filterStatus"].forEach(id=>$("#"+id).addEventListener("change",renderCalendar));["search","listStatus"].forEach(id=>$("#"+id).addEventListener("input",renderContent));
 $("#contentForm").onsubmit=e=>{e.preventDefault();let id=$("#editId").value;let item={id:id?Number(id):Date.now(),client:$("#client").value,date:$("#date").value,time:$("#time").value,platform:$("#platform").value,type:$("#type").value,pillar:$("#pillar").value,title:$("#title").value,status:$("#status").value,posterContent:$("#posterContent").value,script:$("#script").value,caption:$("#caption").value,hashtags:$("#hashtags").value,cta:$("#cta").value,creative:$("#creative").value,postUrl:$("#postUrl").value};if(id)data=data.map(x=>x.id===Number(id)?item:x);else data.push(item);save();closeModal();refresh()};
 refreshClientOptions();show("dashboard");
