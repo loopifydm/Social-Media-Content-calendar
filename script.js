@@ -78,6 +78,20 @@ $$(".nav").forEach(b=>b.addEventListener("click",()=>show(b.dataset.view)));
 $$("[data-view='calendar']").forEach(b=>b.addEventListener("click",()=>show("calendar")));
 $("#addBtn").onclick=()=>openModal();$("#closeModal").onclick=closeModal;$("#cancelBtn").onclick=closeModal;
 $("#prevMonth").onclick=()=>{current.setMonth(current.getMonth()-1);renderCalendar()};$("#nextMonth").onclick=()=>{current.setMonth(current.getMonth()+1);renderCalendar()};$("#todayBtn").onclick=()=>{current=new Date();renderCalendar()};
+function csvCell(v=""){return '"'+String(v??"").replace(/"/g,'""').replace(/\\n/g," ").replace(/\\r/g," ")+'"'}
+function downloadMonth(){
+ const y=current.getFullYear(),m=current.getMonth();
+ const monthItems=data.filter(x=>{const d=new Date(x.date+"T00:00:00");return d.getFullYear()===y&&d.getMonth()===m}).sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time));
+ const headers=["Date","Time","Client","Platform","Format","Content Pillar","Topic / Title","Status","Poster Content","Script","Caption","Hashtags","CTA","Creative URL","Post URL"];
+ const rows=[headers,...monthItems.map(x=>[x.date,x.time||"",x.client,x.platform,x.type,x.pillar||"",x.title,x.status,x.posterContent||"",x.script||"",x.caption||"",x.hashtags||"",x.cta||"",x.creative||"",x.postUrl||""])];
+ const csv="\\ufeff"+rows.map(r=>r.map(csvCell).join(",")).join("\\r\\n");
+ const blob=new Blob([csv],{type:"text/csv;charset=utf-8;"});
+ const url=URL.createObjectURL(blob); const a=document.createElement("a");
+ const monthName=current.toLocaleDateString("en-IN",{month:"long",year:"numeric"}).replace(/\\s+/g,"-");
+ a.href=url;a.download="Loopify-Content-Calendar-"+monthName+".csv";document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
+}
+$("#downloadMonthBtn").onclick=downloadMonth;
+$("#printMonthBtn").onclick=()=>window.print();
 ["filterClient","filterPlatform","filterStatus"].forEach(id=>$("#"+id).addEventListener("change",renderCalendar));["search","listStatus"].forEach(id=>$("#"+id).addEventListener("input",renderContent));
 $("#contentForm").onsubmit=e=>{e.preventDefault();let id=$("#editId").value;let item={id:id?Number(id):Date.now(),client:$("#client").value,date:$("#date").value,time:$("#time").value,platform:$("#platform").value,type:$("#type").value,pillar:$("#pillar").value,title:$("#title").value,status:$("#status").value,posterContent:$("#posterContent").value,script:$("#script").value,caption:$("#caption").value,hashtags:$("#hashtags").value,cta:$("#cta").value,creative:$("#creative").value,postUrl:$("#postUrl").value};if(id)data=data.map(x=>x.id===Number(id)?item:x);else data.push(item);save();closeModal();refresh()};
 refreshClientOptions();show("dashboard");
