@@ -90,7 +90,7 @@ function downloadMonth(){
  const monthName=current.toLocaleDateString("en-IN",{month:"long",year:"numeric"}).replace(/\\s+/g,"-");
  a.href=url;a.download="Loopify-Content-Calendar-"+monthName+".csv";document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
 }
-$("#downloadMonthBtn").onclick=downloadMonth;
+$("#downloadMonthCsvBtn").onclick=downloadMonth;
 $("#printMonthBtn").onclick=()=>window.print();
 ["filterClient","filterPlatform","filterStatus"].forEach(id=>$("#"+id).addEventListener("change",renderCalendar));["search","listStatus"].forEach(id=>$("#"+id).addEventListener("input",renderContent));
 $("#contentForm").onsubmit=e=>{e.preventDefault();let id=$("#editId").value;let item={id:id?Number(id):Date.now(),client:$("#client").value,date:$("#date").value,time:$("#time").value,platform:$("#platform").value,type:$("#type").value,pillar:$("#pillar").value,title:$("#title").value,status:$("#status").value,posterContent:$("#posterContent").value,script:$("#script").value,caption:$("#caption").value,hashtags:$("#hashtags").value,cta:$("#cta").value,creative:$("#creative").value,postUrl:$("#postUrl").value};if(id)data=data.map(x=>x.id===Number(id)?item:x);else data.push(item);save();closeModal();refresh()};
