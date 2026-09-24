@@ -86,11 +86,7 @@ function downloadMonthPDF(){
      ["Platform / Format",(x.platform||"")+"  •  "+(x.type||"")],
      ["Content Pillar",x.pillar||""],
      ["Topic / Title",x.title||""],
-     ["Poster Content",x.posterContent||""],
-     ["Script",x.script||""],
-     ["Caption",x.caption||""],
-     ["Hashtags",x.hashtags||""],
-     ["CTA",x.cta||""]
+     ["Poster Content",x.posterContent||""]
    ];
    const rows=values.map(v=>[v[0],v[1]]);
    const estimated=18+Math.min(58, rows.reduce((n,r)=>n+Math.max(1,Math.ceil(String(r[1]).length/105))*3.2,0));
