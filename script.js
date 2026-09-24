@@ -29,10 +29,10 @@ function renderCalendar(){
  $("#calendar").innerHTML=html;
 }
 function filtered(){let c=$("#filterClient")?.value||"",p=$("#filterPlatform")?.value||"",s=$("#filterStatus")?.value||"";return data.filter(x=>(!c||x.client===c)&&(!p||x.platform===p)&&(!s||x.status===s))}
-function renderContent(){let q=($("#search")?.value||"").toLowerCase(),s=$("#listStatus")?.value||"";let rows=data.filter(x=>(!q||[x.title,x.client,x.caption].join(" ").toLowerCase().includes(q))&&(!s||x.status===s)).sort((a,b)=>(b.date+b.time).localeCompare(a.date+a.time));$("#allContent").innerHTML=`<table class="table"><thead><tr><th>Date</th><th>Content</th><th>Client</th><th>Platform</th><th>Type</th><th>Status</th><th>Actions</th></tr></thead><tbody>${rows.map(x=>`<tr><td>${fmtDate(x.date)}</td><td><b>${esc(x.title)}</b></td><td>${esc(x.client)}</td><td>${x.platform}</td><td>${x.type}</td><td>${statusBadge(x.status)}</td><td class="actions"><button onclick="editContent(${x.id})">Edit</button><button onclick="deleteContent(${x.id})">Delete</button></td></tr>`).join("")}</tbody></table>`}
+function renderContent(){let q=($("#search")?.value||"").toLowerCase(),s=$("#listStatus")?.value||"";let rows=data.filter(x=>(!q||[x.title,x.client,x.posterContent].join(" ").toLowerCase().includes(q))&&(!s||x.status===s)).sort((a,b)=>(b.date+b.time).localeCompare(a.date+a.time));$("#allContent").innerHTML=`<table class="table"><thead><tr><th>Date</th><th>Content</th><th>Client</th><th>Platform</th><th>Type</th><th>Status</th><th>Actions</th></tr></thead><tbody>${rows.map(x=>`<tr><td>${fmtDate(x.date)}</td><td><b>${esc(x.title)}</b></td><td>${esc(x.client)}</td><td>${x.platform}</td><td>${x.type}</td><td>${statusBadge(x.status)}</td><td class="actions"><button onclick="editContent(${x.id})">Edit</button><button onclick="deleteContent(${x.id})">Delete</button></td></tr>`).join("")}</tbody></table>`}
 function renderClients(){let cs=clients();$("#clientCards").innerHTML=cs.map(c=>{let n=data.filter(x=>x.client===c);return `<div class="stat"><span>${esc(c)}</span><b>${n.length}</b><small>${n.filter(x=>x.status==="Published").length} published · ${n.filter(x=>x.status==="Approval").length} pending approval</small></div>`}).join("")}
 function show(v){view=v;$$(".view").forEach(x=>x.classList.add("hidden"));$("#"+v+"View").classList.remove("hidden");$$(".nav").forEach(x=>x.classList.toggle("active",x.dataset.view===v));let titles={dashboard:["Dashboard","Your social media content at a glance."],calendar:["Content Calendar","Plan, schedule and manage every post."],content:["All Content","Search and manage your content pipeline."],clients:["Clients","View content volume and status by client."]};$("#pageTitle").textContent=titles[v][0];$("#pageSub").textContent=titles[v][1];if(v==="dashboard")renderStats();if(v==="calendar")renderCalendar();if(v==="content")renderContent();if(v==="clients")renderClients()}
-function openModal(item=null,presetDate=""){ $("#modal").classList.remove("hidden");$("#modalTitle").textContent=item?"Edit Content":"Add Content";$("#editId").value=item?.id||"";$("#client").value=item?.client||clients()[0];$("#date").value=item?.date||presetDate||localISO(new Date());$("#platform").value=item?.platform||"Instagram";$("#type").value=item?.type||"Static Post";$("#pillar").value=item?.pillar||"EDUCATION";$("#title").value=item?.title||"";$("#status").value=item?.status||"Idea";$("#time").value=item?.time||"18:00";$("#posterContent").value=item?.posterContent||"";$("#script").value=item?.script||"";$("#caption").value=item?.caption||"";$("#hashtags").value=item?.hashtags||"";$("#cta").value=item?.cta||"";$("#creative").value=item?.creative||"";$("#postUrl").value=item?.postUrl||""}
+function openModal(item=null,presetDate=""){ $("#modal").classList.remove("hidden");$("#modalTitle").textContent=item?"Edit Content":"Add Content";$("#editId").value=item?.id||"";$("#client").value=item?.client||clients()[0];$("#date").value=item?.date||presetDate||localISO(new Date());$("#platform").value=item?.platform||"Instagram";$("#type").value=item?.type||"Static Post";$("#pillar").value=item?.pillar||"EDUCATION";$("#title").value=item?.title||"";$("#status").value=item?.status||"Idea";$("#time").value=item?.time||"18:00";$("#posterContent").value=item?.posterContent||"";$("#creative").value=item?.creative||"";$("#postUrl").value=item?.postUrl||""}
 function closeModal(){$("#modal").classList.add("hidden")}
 function editContent(id){openModal(data.find(x=>x.id===id))}
 function quickAdd(date){openModal(null,date)}
@@ -47,8 +47,8 @@ function csvCell(v=""){return '"'+String(v??"").replace(/"/g,'""').replace(/\\n/
 function downloadMonth(){
  const y=current.getFullYear(),m=current.getMonth();
  const monthItems=data.filter(x=>{const d=new Date(x.date+"T00:00:00");return d.getFullYear()===y&&d.getMonth()===m}).sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time));
- const headers=["Date","Time","Client","Platform","Format","Content Pillar","Topic / Title","Status","Poster Content","Script","Caption","Hashtags","CTA","Creative URL","Post URL"];
- const rows=[headers,...monthItems.map(x=>[x.date,x.time||"",x.client,x.platform,x.type,x.pillar||"",x.title,x.status,x.posterContent||"",x.script||"",x.caption||"",x.hashtags||"",x.cta||"",x.creative||"",x.postUrl||""])];
+ const headers=["Date","Time","Client","Platform","Format","Content Pillar","Topic / Title","Status","Poster Content" ,"Creative URL","Post URL"];
+ const rows=[headers,...monthItems.map(x=>[x.date,x.time||"",x.client,x.platform,x.type,x.pillar||"",x.title,x.status,x.posterContent||"",x.creative||"",x.postUrl||""])];
  const csv="\\ufeff"+rows.map(r=>r.map(csvCell).join(",")).join("\\r\\n");
  const blob=new Blob([csv],{type:"text/csv;charset=utf-8;"});
  const url=URL.createObjectURL(blob); const a=document.createElement("a");
@@ -129,8 +129,8 @@ function allContentItems(){
 }
 function downloadAllCSV(){
  const items=allContentItems();
- const headers=["Date","Time","Client","Platform","Format","Content Pillar","Topic / Title","Status","Poster Content","Script","Caption","Hashtags","CTA","Creative URL","Post URL"];
- const rows=[headers,...items.map(x=>[x.date,x.time||"",x.client||"",x.platform||"",x.type||"",x.pillar||"",x.title||"",x.status||"",x.posterContent||"",x.script||"",x.caption||"",x.hashtags||"",x.cta||"",x.creative||"",x.postUrl||""])];
+ const headers=["Date","Time","Client","Platform","Format","Content Pillar","Topic / Title","Status","Poster Content" ,"Creative URL","Post URL"];
+ const rows=[headers,...items.map(x=>[x.date,x.time||"",x.client||"",x.platform||"",x.type||"",x.pillar||"",x.title||"",x.status||"",x.posterContent||"",x.creative||"",x.postUrl||""])];
  const csv="\ufeff"+rows.map(r=>r.map(csvCell).join(",")).join("\r\n");
  const url=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8;"}));
  const a=document.createElement("a"); a.href=url; a.download="Loopify-All-Content.csv"; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
@@ -155,10 +155,7 @@ function downloadAllPDF(){
     ["Topic / Title",x.title||""],
     ["Status",x.status||""],
     ["Poster Content",x.posterContent||""],
-    ["Script",x.script||""],
-    ["Caption",x.caption||""],
-    ["Hashtags",x.hashtags||""],
-    ["CTA",x.cta||""]
+    
    ];
    const estimated=20+Math.min(62,rows.reduce((n,r)=>n+Math.max(1,Math.ceil(String(r[1]).length/105))*3.2,0));
    if(y+estimated>H-12){doc.addPage();header();y=27;}
@@ -180,5 +177,5 @@ $("#downloadAllCsvBtn").onclick=downloadAllCSV;
 $("#downloadAllPdfBtn").onclick=downloadAllPDF;
 
 ["filterClient","filterPlatform","filterStatus"].forEach(id=>$("#"+id).addEventListener("change",renderCalendar));["search","listStatus"].forEach(id=>$("#"+id).addEventListener("input",renderContent));
-$("#contentForm").onsubmit=e=>{e.preventDefault();let id=$("#editId").value;let item={id:id?Number(id):Date.now(),client:$("#client").value,date:$("#date").value,time:$("#time").value,platform:$("#platform").value,type:$("#type").value,pillar:$("#pillar").value,title:$("#title").value,status:$("#status").value,posterContent:$("#posterContent").value,script:$("#script").value,caption:$("#caption").value,hashtags:$("#hashtags").value,cta:$("#cta").value,creative:$("#creative").value,postUrl:$("#postUrl").value};if(id)data=data.map(x=>x.id===Number(id)?item:x);else data.push(item);save();closeModal();refresh()};
+$("#contentForm").onsubmit=e=>{e.preventDefault();let id=$("#editId").value;let item={id:id?Number(id):Date.now(),client:$("#client").value,date:$("#date").value,time:$("#time").value,platform:$("#platform").value,type:$("#type").value,pillar:$("#pillar").value,title:$("#title").value,status:$("#status").value,posterContent:$("#posterContent").value,creative:$("#creative").value,postUrl:$("#postUrl").value};if(id)data=data.map(x=>x.id===Number(id)?item:x);else data.push(item);save();closeModal();refresh()};
 refreshClientOptions();show("dashboard");
